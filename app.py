@@ -3,8 +3,10 @@ import base64
 import io
 from flask import Flask, request, jsonify, render_template
 from PIL import Image
+from whitenoise import WhiteNoise
 
 app = Flask(__name__)
+app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
 
 # ======== MODEL CONFIG =========
 CLASSIFY_MODEL_URL = "https://classify.roboflow.com/volcanix-nkna6/1"
