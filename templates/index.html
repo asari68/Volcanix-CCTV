@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediksi Aktivitas Gunung Api</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #000;
+            background-image: linear-gradient(to top, rgba(255, 251, 0, 0.5), rgba(0, 0, 0, 0.8) 40%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #eee;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header h1 {
+            color: #ffffff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            margin: 0;
+        }
+
+        .header-logo {
+            height: 110px;
+            width: auto;
+            filter: brightness(1.1) contrast(1.1);
+        }
+        
+        .upload-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            text-align: center;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dropzone {
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+            max-width: 400px;
+            background-color: rgba(255, 255, 255, 0.03);
+            transition: border-color 0.3s ease;
+        }
+
+        .dropzone:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropzone input[type="file"] {
+            display: none;
+        }
+
+        .dropzone label {
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+            font-weight: 500;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background-color 0.3s ease;
+        }
+        
+        .dropzone label:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .file-name {
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        .btn-analyze {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-analyze:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-analyze:disabled {
+            background-color: #555;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: #eee;
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 20px;
+        }
+
+        .card-content {
+            padding: 25px;
+            overflow: hidden; 
+        }
+
+        .card-content img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-content p {
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            margin: 0;
+        }
+        
+        /* --- STYLING UNTUK TAMPILAN BARU (SESUAI GAMBAR) --- */
+        .classification-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .classification-list li {
+            display: flex;
+            justify-content: space-between; /* Kiri dan Kanan */
+            align-items: center;
+            padding: 13px 0; /* Sedikit padding atas-bawah */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Garis pemisah tipis */
+            font-size: 15px;
+        }
+
+        .classification-list li:last-child {
+            border-bottom: none; /* Hapus garis di item terakhir */
+        }
+
+        .classification-list .label {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7); /* Label agak transparan */
+        }
+
+        .classification-list .value {
+            color: #ffffff; /* Value jadi putih solid */
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* Kelas khusus untuk keyakinan */
+        .value.confidence {
+            font-weight: 700;
+            font-size: 1.1em; /* Sedikit lebih besar */
+            color: #2ecc71; /* Warna hijau cerah */
+        }
+        
+        .error {
+            color: #ff8a8a;
+            font-weight: bold;
+            font-style: normal;
+        }
+        /* --- AKHIR STYLING BARU --- */
+
+
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .header-logo {
+                height: 50px;
+            }
+            .dropzone {
+                width: 100%;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Prediksi Aktivitas Gunung Api</h1>
+            <img src="logo.png" alt="Logo Kementerian ESDM" class="header-logo">
+        </header>
+
+        <section class="upload-section">
+            <div class="dropzone" id="dropzone">
+                <input type="file" id="fileInput" accept="image/*" />
+                <label for="fileInput">Pilih File Gambar</label>
+                <span class="file-name" id="fileName">Belum ada file dipilih</span>
+            </div>
+            <button class="btn-analyze" id="predictButton" disabled>Mulai Analisis</button>
+        </section>
+
+        <div class="results-grid">
+
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Gambar Asli</h2>
+                    </div>
+                    <div class="card-content" id="originalImage">
+                        <p>Silakan pilih gambar untuk memulai.</p>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="card" id="segmentationBox" style="display:none;">
+                    <div class="card-header">
+                        <h2>Hasil Segmentasi Gunung Api</h2>
+                    </div>
+                    <div class="card-content" id="segmentationResult">
+                        <p>Menunggu hasil segmentasi...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Hasil Klasifikasi</h2>
+                    </div>
+                    <div class="card-content" id="classificationResult">
+                        <p>Hasil prediksi akan muncul di sini...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const predictButton = document.getElementById("predictButton");
+        const originalImage = document.getElementById("originalImage");
+        const classificationResult = document.getElementById("classificationResult");
+        const segmentationBox = document.getElementById("segmentationBox");
+        const segmentationResult = document.getElementById("segmentationResult");
+        
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files[0];
+            const fileNameSpan = document.getElementById('fileName'); 
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    originalImage.innerHTML = `<img src="${e.target.result}" alt="Gambar Asli">`;
+                };
+                reader.readAsDataURL(file);
+                predictButton.disabled = false;
+                fileNameSpan.textContent = file.name;
+            } else {
+                originalImage.innerHTML = `<p style="color: rgba(255,255,255,0.6);">Silakan pilih gambar untuk memulai.</p>`;
+                predictButton.disabled = true;
+                fileNameSpan.textContent = 'Belum ada file dipilih';
+            }
+        });
+
+        predictButton.addEventListener("click", async () => {
+            const file = fileInput.files[0];
+            if (!file) return alert("Pilih file gambar terlebih dahulu!");
+
+            predictButton.disabled = true;
+            predictButton.innerText = "Menganalisis...";
+            classificationResult.innerHTML = "<p>Sedang memanggil AI... Mohon tunggu...</p>";
+            
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch("/analyze", { method: "POST", body: formData });
+                const data = await res.json();
+
+                if (data.error) throw new Error(data.error);
+
+                // === Bagian klasifikasi ===
+                const preds = data.classification?.predictions || {};
+                const entries = Object.entries(preds);
+                let waktu = "-", cuaca = "-", kondisi = "-", keyakinan = "-";
+
+                for (const [label, info] of entries) {
+                    const l = label.toLowerCase();
+                    if (l.includes("siang") || l.includes("malam")) waktu = label;
+                    else if (l.includes("awan")) cuaca = label;
+                    else kondisi = label;
+                }
+
+                if (entries.length > 0) {
+                    const best = entries.reduce((a, b) => a[1].confidence > b[1].confidence ? a : b);
+                    keyakinan = (best[1].confidence * 100).toFixed(2) + "%";
+                }
+
+                const now = new Date();
+                const waktuAnalisis = now.toLocaleString("id-ID", {
+                    weekday: "long", year: "numeric", month: "long",
+                    day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit",
+                });
+
+                // ----- PERUBAHAN UTAMA DI SINI -----
+                // Mengubah format HTML agar sesuai dengan CSS .classification-list
+                classificationResult.innerHTML = `
+                    <ul class="classification-list">
+                        <li>
+                            <span class="label">Waktu Analisis</span>
+                            <span class="value">${waktuAnalisis}</span>
+                        </li>
+                        <li>
+                            <span class="label">Waktu Prediksi</span>
+                            <span class="value">${waktu}</span>
+                        </li>
+                        <li>
+                            <span class="label">Cuaca</span>
+                            <span class="value">${cuaca}</span>
+                        </li>
+                        <li>
+                            <span class="label">Kondisi</span>
+                            <span class="value">${kondisi}</span>
+                        </li>
+                        <li>
+                            <span class="label">Keyakinan</span>
+                            <span class="value confidence">${keyakinan}</span>
+                        </li>
+                    </ul>
+                `;
+                // ----- AKHIR PERUBAHAN -----
+
+                // === Bagian segmentasi ===
+                const seg = data.segmentation || {};
+                let segImage = null;
+
+                if (seg.image) segImage = seg.image;
+                else if (seg.predicted_image) segImage = seg.predicted_image;
+                else if (seg.visualization) segImage = seg.visualization;
+                else if (seg.output_image_url) segImage = seg.output_image_url;
+
+                if (segImage) {
+                    segmentationResult.innerHTML = `<img src="${segImage}" alt="Hasil Segmentasi">`;
+                    segmentationBox.style.display = "block";
+                } else {
+                    segmentationResult.innerHTML = `<p>Tidak ada hasil segmentasi yang dapat ditampilkan.</p>`;
+                    segmentationBox.style.display = "block";
+                }
+
+            } catch (err) {
+                console.error("Error:", err);
+                classificationResult.innerHTML = `<p class="error">Error: ${err.message}</p>`;
+                segmentationBox.style.display = "none";
+            } finally {
+                predictButton.disabled = false;
+                predictButton.innerText = "Mulai Analisis";
+            }
+        });
+    </script>
+</body>
+</html>
